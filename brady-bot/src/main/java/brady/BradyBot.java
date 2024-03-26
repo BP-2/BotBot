@@ -841,8 +841,12 @@ public class BradyBot extends AIWithComputationBudget {
                     continue;
             }
             
-            if(produceCombat(barrack, _utt.getUnitType("Heavy")))
+            if(produceCombat(barrack, _utt.getUnitType("Heavy"))){
                 continue;
+            }
+            else if(produceCombat(barrack, _utt.getUnitType("Light"))){
+                continue;
+            }
             
             if(enemyHeaviesWeak()) //not enough resource for heavy
                 if(produceCombat(barrack, _utt.getUnitType("Ranged")))
