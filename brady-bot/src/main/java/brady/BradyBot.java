@@ -415,6 +415,10 @@ public class BradyBot extends AIWithComputationBudget {
         _newDmgs.replace(e, newDmg);
         return true;
     }
+
+
+
+    
     boolean doNothing(Unit u) {
          _pa.addUnitAction(u, new UnitAction(UnitAction.TYPE_NONE, 1));
          return true;
