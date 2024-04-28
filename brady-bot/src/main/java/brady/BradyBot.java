@@ -190,7 +190,7 @@ public class BradyBot extends AIWithComputationBudget {
     public BradyBot(UnitTypeTable utt) {
         super(-1, -1);
         _utt = utt;
-        restartPathFind(); //FloodFillPathFinding(); //AStarPathFinding();
+        restartPathFind(); 
         _memHarvesters = new ArrayList<>();
                 
         _dirs = new ArrayList<>();
@@ -202,7 +202,7 @@ public class BradyBot extends AIWithComputationBudget {
     @Override
     public void reset() {
         _memHarvesters = new ArrayList<>();
-        restartPathFind(); //FloodFillPathFinding();//BFSPathFinding();//AStarPathFinding();
+        restartPathFind(); 
     }
     @Override
     public AI clone() {
@@ -221,15 +221,14 @@ public class BradyBot extends AIWithComputationBudget {
         ResourceUsage ru = _gs.getResourceUsage().clone();
         ru.merge(_pa.getResourceUsage());
         
-        //todo - on small board taking future pos as used may 
-        //be to harsh and costly
+
         for (Integer pos : _locationsTaken) {
             int x = pos % _pgs.getWidth();
             int y = pos / _pgs.getWidth();
             Unit u = new Unit(0, _utt.getUnitType("Worker"), x, y);
             UnitAction a = null;
             if (x > 0)
-                a = new UnitAction(UnitAction.TYPE_MOVE, NoDirection); //this is a hack
+                a = new UnitAction(UnitAction.TYPE_MOVE, NoDirection); 
             else
                 a = new UnitAction(UnitAction.TYPE_MOVE, NoDirection);
             UnitActionAssignment uaa = new UnitActionAssignment(u, a, 0);
@@ -353,7 +352,7 @@ public class BradyBot extends AIWithComputationBudget {
         }
         return minDist;
     }
-    boolean isSeperated(Unit base, List<Unit> units) {
+    boolean isSeparated(Unit base, List<Unit> units) {
         for (Unit u : units) {
             int rasterPos = u.getX() + u.getY() * _pgs.getWidth();
             ResourceUsage rsu = fullResourceUse();//(_pgs.getHeight() == 8) ? _gs.getResourceUsage() :  //todo - remove this
@@ -362,8 +361,6 @@ public class BradyBot extends AIWithComputationBudget {
         }
         return true;
     }
-    
-    //todo - fix this to real distance
     int distance(Pos a, Pos b) {
         if (a == null | b == null)
             return Integer.MAX_VALUE;
@@ -608,12 +605,12 @@ public class BradyBot extends AIWithComputationBudget {
                     break;
                 counter++;
             }
-            if (counter < candidates.size()) //if (!candidates.isEmpty()) //did we make a move
+            if (counter < candidates.size()) 
                 continue;
             if (u.getType() != _utt.getUnitType("Ranged"))
                 continue;
             Unit enemy = candidates.get(0);
-            if (overPowering()) //give worker to open pathway if blocked
+            if (overPowering()) 
                 tryMoveAway(u, u);
             moveInDirection(u, enemy);
         }
@@ -753,19 +750,17 @@ public class BradyBot extends AIWithComputationBudget {
     }
     
     int workerPerBase(Unit base) {
-        if (_pgs.getWidth() < 9)// && _barracks.isEmpty())
+        if (_pgs.getWidth() < 9)
             return 15;
         
         if (_pgs.getWidth() > 16)
             return 2;
         
-        if (isSeperated(base, _enemies) || _gs.getTime() > 1000)
+        if (isSeparated(base, _enemies) || _gs.getTime() > 1000)
             return 2;
         
         int enemyFromBelow = (_enemyWorkers.size()) / Math.max(_enemyBases.size(), 1);
         return Math.max(enemyFromBelow, 2);
-        //return  .size()
-        //return 4;
     }
     
     void basesAction() {
@@ -775,12 +770,11 @@ public class BradyBot extends AIWithComputationBudget {
             if(busy(base))
                 continue;
             int workerPerBase = workerPerBase(base);
-            boolean onlyOption = _resources.isEmpty() && ((_p.getResources() - _resourcesUsed) == 1); //todo some workers carry...
+            boolean onlyOption = _resources.isEmpty() && ((_p.getResources() - _resourcesUsed) == 1); 
             if(onlyOption) {
                 produceWherever(base, _utt.getUnitType("Worker"));
                 continue;
             }
-            // Dont produce if not in abundance
             if (_pgs.getWidth()>= 9 &&  _workers.size() + producingWorker + producingCount >= workerPerBase * _bases.size())
                 continue;
             int dirBuild = bestBuildWorkerDir(base);
@@ -840,7 +834,7 @@ public class BradyBot extends AIWithComputationBudget {
             if (busy(barrack))
                 continue;
             
-            if(isSeperated(barrack, _enemies)) {
+            if(isSeparated(barrack, _enemies)) {
                 if(produceCombat(barrack, _utt.getUnitType("Ranged")))
                     continue;
             }
@@ -852,7 +846,7 @@ public class BradyBot extends AIWithComputationBudget {
                 continue;
             }
             
-            if(enemyHeaviesWeak()) //not enough resource for heavy
+            if(enemyHeaviesWeak()) 
                 if(produceCombat(barrack, _utt.getUnitType("Ranged")))
                     continue;
             
@@ -866,7 +860,7 @@ public class BradyBot extends AIWithComputationBudget {
             return false;
         Unit exUnit = _pgs.getUnitAt(p.getX(), p.getY());
         if (exUnit != null && (exUnit.getType() == _utt.getUnitType("Base")
-                || exUnit.getType() == _utt.getUnitType("Barracks"))) //todo - may be if mobile unit too?
+                || exUnit.getType() == _utt.getUnitType("Barracks"))) 
             return false; 
         return true;
     }
@@ -893,7 +887,6 @@ public class BradyBot extends AIWithComputationBudget {
                 return;
         }
     }
-    
     boolean between(Pos a, Pos b, Pos c) {
         if (a.getX() < b.getX() && c.getX() < b.getX())
             return false;
@@ -947,7 +940,7 @@ public class BradyBot extends AIWithComputationBudget {
             return Integer.MIN_VALUE;
         
         Unit b = closest(dst, _bases);
-        if (isSeperated(b, _enemies))
+        if (isSeparated(b, _enemies))
             return -(int) buildBlockPenalty(dst, true)*10;
         
         List<Pos> allBrxs = toPos(_barracks);
@@ -1190,7 +1183,7 @@ public class BradyBot extends AIWithComputationBudget {
         _futureBarracks = new ArrayList<>();
         _futureHeavies = 0;
         _enemyFutureHeavy = 0;
-        for (Unit u : _all) { //todo big change that was ally by mistake
+        for (Unit u : _all) { 
             UnitActionAssignment aa = _gs.getActionAssignment(u);
             if(aa == null)
                 continue;
@@ -1200,12 +1193,11 @@ public class BradyBot extends AIWithComputationBudget {
             lockPos(u.getX(), u.getY(), aa.action.getDirection());
              
             UnitType ut = aa.action.getUnitType();
-            
             if (!isEnemyUnit(u) && (ut != null))
                  _resourcesUsed += aa.action.getUnitType().cost; 
             
              if (!isEnemyUnit(u) && ut == _utt.getUnitType("Barracks")) {
-                 Pos p = futurePos(u.getX(), u.getY(), aa.action.getDirection()); //todo this was aa.action.x which was 0 big change
+                 Pos p = futurePos(u.getX(), u.getY(), aa.action.getDirection()); 
                  _futureBarracks.add(p);
              }
              if (!isEnemyUnit(u) && ut == _utt.getUnitType("Heavy")) {
@@ -1226,7 +1218,6 @@ public class BradyBot extends AIWithComputationBudget {
                 continue;
             if (!_newDmgs.containsKey(t))
                 _newDmgs.put(t, 0);
-            // todo - not assuming its going to hit
             int newDmg = _newDmgs.get(t) + u.getMaxDamage();
             _newDmgs.replace(t, newDmg);
         }
@@ -1290,10 +1281,7 @@ public class BradyBot extends AIWithComputationBudget {
         goCombat(_heavies, 30);
         goCombat(_archers, 15);
         goCombat(_lights, 5);
-        
-        //if (_pgs.getWidth() >= 9)
-            
-        
+                    
         
         _pa.fillWithNones(gs, player, 1);
         return _pa;
